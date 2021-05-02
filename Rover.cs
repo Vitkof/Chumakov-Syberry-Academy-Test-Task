@@ -37,8 +37,32 @@ public class Rover
         return visitedFrom;
     }
 
+    delegate bool CheckNextNode(int x, int y);
     public static void CalculateRoverPath(int[,] map)
     {
+        int rows = map.GetLength(0);
+        int cols = map.GetLength(1);
+        Dictionary<string, (int, string)[]> graph = new Dictionary<string, (int, string)[]>();
+
+        CheckNextNode check = delegate (int i, int j)
+        {
+            return (0 <= i && i < rows) 
+            && (0 <= j && j < cols)
+            ? true
+            : false;
+        };
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                (int, string)[] arr = new (int, string)[4];
+                if (check(i - 1, j)) { arr[0] = (map[i - 1, j], $"[{i - 1}][{j}]"); };
+                if (check(i, j + 1)) { arr[1] = (map[i, j + 1], $"[{i}][{j + 1}]"); };
+                if (check(i + 1, j)) { arr[2] = (map[i + 1, j], $"[{i + 1}][{j}]"); };
+                if (check(i, j - 1)) { arr[3] = (map[i, j - 1], $"[{i}][{j - 1}]"); };
+                graph.Add($"[{i}][{j}]", arr);                
+            }
+        }
     }
 
     static void Main(string[] args)
