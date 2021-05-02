@@ -6,13 +6,13 @@ public class Rover
     static Dictionary<string, string> Dejkstra(string startNode, string endNode,
         Dictionary<string, (int, string)[]> graph)
     {
-        SortedList<int, string> nodesQueue = new SortedList<int, string>() { { 0, startNode } };
+        List<(int, string)> nodesQueue = new List<(int, string)>() { (0, startNode) };
         Dictionary<string, int> fuelVisit = new Dictionary<string, int>() { { startNode, 0 } };
         Dictionary<string, string> visitedFrom = new Dictionary<string, string>() { { startNode, null } };
 
         while (nodesQueue.Count != 0)
         {
-            string currNode = nodesQueue.Values[0];
+            string currNode = nodesQueue[0].Item2;
             nodesQueue.RemoveAt(0);
             if (currNode == endNode) break;  //end of algorithm 
 
@@ -27,7 +27,8 @@ public class Rover
                     updateFuel < fuelVisit[neighbourNode])
                 {
                     fuelVisit[neighbourNode] = updateFuel;
-                    nodesQueue.Add(updateFuel, neighbourNode);
+                    nodesQueue.Add((updateFuel, neighbourNode));
+                    nodesQueue.Sort();
                     visitedFrom[neighbourNode] = currNode;
                 }
             }
