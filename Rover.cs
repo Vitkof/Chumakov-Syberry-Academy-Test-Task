@@ -55,41 +55,29 @@ public class Rover
         {
             for (int j = 0; j < cols; j++)
             {
-                (int, string)[] arr = new (int, string)[4];
-                if (check(i - 1, j)) { arr[0] = (map[i - 1, j], $"[{i - 1}][{j}]"); };
-                if (check(i, j + 1)) { arr[1] = (map[i, j + 1], $"[{i}][{j + 1}]"); };
-                if (check(i + 1, j)) { arr[2] = (map[i + 1, j], $"[{i + 1}][{j}]"); };
-                if (check(i, j - 1)) { arr[3] = (map[i, j - 1], $"[{i}][{j - 1}]"); };
-                graph.Add($"[{i}][{j}]", arr);                
+                List<(int, string)> arr = new List<(int, string)>();
+                if (check(i - 1, j)) { arr.Add((map[i - 1, j], $"[{i - 1}][{j}]")); };
+                if (check(i, j + 1)) { arr.Add((map[i, j + 1], $"[{i}][{j + 1}]")); };
+                if (check(i + 1, j)) { arr.Add((map[i + 1, j], $"[{i + 1}][{j}]")); };
+                if (check(i, j - 1)) { arr.Add((map[i, j - 1], $"[{i}][{j - 1}]")); };
+                graph.Add($"[{i}][{j}]", arr.ToArray());                
             }
+        }
+        foreach (var kvp in graph)
+        {
+            Console.Write($"{kvp.Key} : ");
+            foreach (var v in kvp.Value) Console.Write(v);
+            Console.WriteLine();
         }
     }
 
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello World!");
-
-        Dictionary<string, (int, string)[]> gr1 = new Dictionary<string, (int, string)[]>()
-        {
-            {"A", new (int, string)[] { (2, "B"), (3, "F") } },
-            {"B", new (int, string)[] { (2, "A"), (2, "C") } },
-            {"C", new (int, string)[] { (2, "B"), (2, "D") } },
-            {"D", new (int, string)[] { (2, "C"), (1, "F") } },
-            {"F", new (int, string)[] { (3, "A"), (1, "D") } }
-        };
-        string start = "A";
-        string end = "D";
-        var visited = Dejkstra(start, end, gr1);
-
-        string currNode = end;
-        Console.Write($"{currNode}");
-
-        while (currNode != start)
-        {
-            currNode = visited[currNode];
-            Console.Write($"->{currNode}");
-        }
-
+        CalculateRoverPath(new int[,] { 
+            { 1, 2, 3 },
+            {4,5,6 },
+            {7,8,9 }
+        });
         Console.ReadKey();
     }
 }
