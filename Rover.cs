@@ -56,10 +56,13 @@ public class Rover
             for (int j = 0; j < cols; j++)
             {
                 List<(int, string)> arr = new List<(int, string)>();
-                if (check(i - 1, j)) { arr.Add((map[i - 1, j], $"[{i - 1}][{j}]")); };
-                if (check(i, j + 1)) { arr.Add((map[i, j + 1], $"[{i}][{j + 1}]")); };
-                if (check(i + 1, j)) { arr.Add((map[i + 1, j], $"[{i + 1}][{j}]")); };
-                if (check(i, j - 1)) { arr.Add((map[i, j - 1], $"[{i}][{j - 1}]")); };
+                (int di, int dj)[] sides = { (-1,0), (1,0), (0,-1), (0,1) };
+                foreach (var (di, dj) in sides) 
+                {
+                    if (check(i + di, j + dj)) 
+                        arr.Add((Math.Abs(map[i+di, j+dj] - map[i,j]),
+                            $"[{i+di}][{j+dj}]"));
+                }
                 graph.Add($"[{i}][{j}]", arr.ToArray());                
             }
         }
