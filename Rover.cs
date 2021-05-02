@@ -43,5 +43,28 @@ public class Rover
     static void Main(string[] args)
     {
         Console.WriteLine("Hello World!");
+
+        Dictionary<string, (int, string)[]> gr1 = new Dictionary<string, (int, string)[]>()
+        {
+            {"A", new (int, string)[] { (2, "B"), (3, "F") } },
+            {"B", new (int, string)[] { (2, "A"), (2, "C") } },
+            {"C", new (int, string)[] { (2, "B"), (2, "D") } },
+            {"D", new (int, string)[] { (2, "C"), (1, "F") } },
+            {"F", new (int, string)[] { (3, "A"), (1, "D") } }
+        };
+        string start = "A";
+        string end = "D";
+        var visited = Dejkstra(start, end, gr1);
+
+        string currNode = end;
+        Console.Write($"{currNode}");
+
+        while (currNode != start)
+        {
+            currNode = visited[currNode];
+            Console.Write($"->{currNode}");
+        }
+
+        Console.ReadKey();
     }
 }
