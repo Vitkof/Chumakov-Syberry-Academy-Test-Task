@@ -23,6 +23,15 @@ public class Node : IComparable<Node>
     }
 }
 
+class CannotStartMovement : Exception
+{
+    public CannotStartMovement(string msg) : base(msg)
+    {
+
+    }
+}
+
+
 public class Rover
 {
     static int Heuristic(Node a, Node end)
@@ -36,6 +45,8 @@ public class Rover
         List<(int, Node)> nodesQueue = new List<(int, Node)>() { (0, startNode) };
         Dictionary<Node, int> fuelVisit = new Dictionary<Node, int>() { { startNode, 0 } };
         Dictionary<Node, Node> visitedFrom = new Dictionary<Node, Node>() { { startNode, null } };
+        int diagCountMove = 0;
+        
 
         while (nodesQueue.Count != 0)
         {
@@ -46,9 +57,18 @@ public class Rover
             var nextNodes = graph[currNode];
             foreach ((int, Node) nextNode in nextNodes)
             {
+                bool inDiagonal = false;
                 int neighbourFuel = nextNode.Item1;
                 Node neighbourNode = nextNode.Item2;
+
                 var updateFuel = fuelVisit[currNode] + neighbourFuel + 1; //+1 point fuel on move
+                if (Math.Abs(neighbourNode.I - currNode.I) == 1 &&   //check diagonal
+                    Math.Abs(neighbourNode.J - currNode.J) == 1)
+                {
+                    if (diagCountMove % 2 != 0) updateFuel++;
+                    inDiagonal = true;
+                }
+
 
                 if (!fuelVisit.ContainsKey(neighbourNode) ||
                     updateFuel < fuelVisit[neighbourNode])
@@ -58,6 +78,8 @@ public class Rover
                     nodesQueue.Add((priority, neighbourNode));
                     nodesQueue.Sort();
                     visitedFrom[neighbourNode] = currNode;
+                    if(inDiagonal) diagCountMove++;
+
                 }
             }
         }
@@ -65,11 +87,14 @@ public class Rover
         return (visitedFrom, fuelVisit[endNode]);
     }
 
+
     delegate bool CheckNextNode(int x, int y);
-    public static void CalculateRoverPath(int[,] map)
+    public static void CalculateRoverPath(string[,] map)
     {
         int rows = map.GetLength(0);
         int cols = map.GetLength(1);
+
+
         Dictionary<Node, (int, Node)[]> graph = new Dictionary<Node, (int, Node)[]>();
 
         CheckNextNode check = (i, j) =>
@@ -85,12 +110,30 @@ public class Rover
             for (int j = 0; j < cols; j++)
             {               
                 List<(int, Node)> arr = new List<(int, Node)>();
-                (int di, int dj)[] sides = { (-1, 0), (1, 0), (0, -1), (0, 1) };
+                (int di, int dj)[] sides = { (-1, 0), (1, 0), (0, -1), (0, 1),
+                                            (-1, -1), (-1, 1), (1, -1), (1, 1)};
+
                 foreach (var (di, dj) in sides)
                 {
                     if (check(i + di, j + dj))
-                        arr.Add((Math.Abs(map[i + di, j + dj] - map[i, j]),
-                            nodes[i + di, j + dj]));
+                    {
+                        try
+                        {
+                            int x = Convert.ToInt32(map[i + di, j + dj]);
+                            int y = Convert.ToInt32(map[i, j]);
+                            arr.Add((Math.Abs(x - y), nodes[i + di, j + dj]));
+                        }
+                        catch
+                        {
+                            if (map[i + di, j + dj] != "X" || map[i, j] != "X")
+                                throw new Exception("Matrix contains not only numbers and a sign \"X\"");
+                            else continue;
+                        }
+                                                
+                    }
+
+                        
+                        
                 }
                 graph.Add(nodes[i,j], arr.ToArray());
             }
@@ -123,5 +166,14 @@ public class Rover
 
     static void Main(string[] args)
     {
+        CalculateRoverPath(new string[,] {
+            { "0", "-2", "3", "4", "1" },
+            { "2", "3", "4", "4", "1" },
+            { "3", "4", "5", "6", "-2" },
+            { "4", "5", "6", "7", "1" },
+            { "6", "7", "8", "7", "1" }
+        });
+
+        Console.ReadKey();
     }
 }
