@@ -7,6 +7,7 @@ public class Node : IComparable<Node>
 {
     public int I { get; set; }
     public int J { get; }
+    public int DiagCount { get; set; }
     public Node(int i, int j)
     {
         I = i;
@@ -44,9 +45,7 @@ public class Rover
     {
         List<(int, Node)> nodesQueue = new List<(int, Node)>() { (0, startNode) };
         Dictionary<Node, int> fuelVisit = new Dictionary<Node, int>() { { startNode, 0 } };
-        Dictionary<Node, Node> visitedFrom = new Dictionary<Node, Node>() { { startNode, null } };
-        int diagCountMove = 0;
-        
+        Dictionary<Node, Node> visitedFrom = new Dictionary<Node, Node>() { { startNode, null } };        
 
         while (nodesQueue.Count != 0)
         {
@@ -65,7 +64,7 @@ public class Rover
                 if (Math.Abs(neighbourNode.I - currNode.I) == 1 &&   //check diagonal
                     Math.Abs(neighbourNode.J - currNode.J) == 1)
                 {
-                    if (diagCountMove % 2 != 0) updateFuel++;
+                    if (currNode.DiagCount % 2 != 0) updateFuel++;
                     inDiagonal = true;
                 }
 
@@ -75,11 +74,14 @@ public class Rover
                 {
                     int priority = updateFuel + Heuristic(neighbourNode, endNode); //update to *A-algorithm
                     fuelVisit[neighbourNode] = updateFuel;
+
+                    if (inDiagonal) neighbourNode.DiagCount = currNode.DiagCount+1;
+
                     nodesQueue.Add((priority, neighbourNode));
                     nodesQueue.Sort();
                     visitedFrom[neighbourNode] = currNode;
-                    if(inDiagonal) diagCountMove++;
 
+                    Console.WriteLine($"{neighbourNode.Show()} - {updateFuel} - DiagCount {neighbourNode.DiagCount}");
                 }
             }
         }
@@ -91,6 +93,7 @@ public class Rover
     delegate bool CheckNextNode(int x, int y);
     public static void CalculateRoverPath(string[,] map)
     {
+
         int rows = map.GetLength(0);
         int cols = map.GetLength(1);
 
@@ -107,6 +110,7 @@ public class Rover
 
         for (int i = 0; i < rows; i++)
         {
+            
             for (int j = 0; j < cols; j++)
             {               
                 List<(int, Node)> arr = new List<(int, Node)>();
@@ -130,9 +134,7 @@ public class Rover
                             else continue;
                         }
                                                 
-                    }
-
-                        
+                    }                        
                         
                 }
                 graph.Add(nodes[i,j], arr.ToArray());
@@ -141,39 +143,35 @@ public class Rover
 
         Node start = nodes[0, 0];
         Node end = nodes[rows - 1, cols - 1];
-        var dejkstra = Dejkstra(start, end, graph);
-        var visited = dejkstra.Item1;
-        int fuel = dejkstra.Item2;
 
-        Node currNode = end;
-        string path = $"{currNode.Show()}";
-        int steps = 0;
-
-        while (currNode != start)
+        try
         {
-            currNode = visited[currNode];
-            path = path.Insert(0, $"{currNode.Show()}->");
-            steps++;
-        }
+            var dejkstra = Dejkstra(start, end, graph);
+            var visited = dejkstra.Item1;
+            int fuel = dejkstra.Item2;
+            Node currNode = end;
+            string path = $"{currNode.Show()}";
+            int steps = 0;
 
-        using (StreamWriter sw = new StreamWriter("path-plan.txt"))
-        {
-            sw.WriteLine(path);
-            sw.WriteLine($"steps: {steps}");
-            sw.WriteLine($"fuel: {fuel}");
+            while (currNode != start)
+            {
+                currNode = visited[currNode];
+                path = path.Insert(0, $"{currNode.Show()}->");
+                steps++;
+            }
+
+            using (StreamWriter sw = new StreamWriter("path-plan.txt"))
+            {
+                sw.WriteLine(path);
+                sw.WriteLine($"steps: {steps}");
+                sw.WriteLine($"fuel: {fuel}");
+            }
         }
+        catch
+        {
+            throw new CannotStartMovement("Cannot start a movement because...... .");
+        }
+        
     }
 
-    static void Main(string[] args)
-    {
-        CalculateRoverPath(new string[,] {
-            { "0", "-2", "3", "4", "1" },
-            { "2", "3", "4", "4", "1" },
-            { "3", "4", "5", "6", "-2" },
-            { "4", "5", "6", "7", "1" },
-            { "6", "7", "8", "7", "1" }
-        });
-
-        Console.ReadKey();
-    }
 }
