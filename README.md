@@ -1,5 +1,4 @@
-# Victor-Chumakov-Academy-Test-Task
-# Victor-Chumakov-Academy-Technical-Interview
+# Academy-Test-Task and Technical-Interview
 syberry-academy-e07-test-task-technical-interview
 
 # May 19 Technical Interview
@@ -8,16 +7,16 @@ In Academy, we expect you to know how to read requirements and how to code in yo
 
 To prove this, we ask you to implement this task and submit it via Gitlab to confirm that you are ready to study at Academy.
 This task requires approximately two working hours to solve. It does not mean that you will solve it in two hours. It is ok to spend up to four hours on this task.
-We suggest you spend at least 40 minutes reading the task and modeling the solution. We tested this task on our engineers: several Syberry Junior Developers spent 40 minutes reading and thinking and approximately 1:30 hours of programming it on average.
+We suggest you spend at least 40 minutes reading the task and modeling the solution. We tested this task on our engineers: several Syberry Junior Developers spent 40 minutes reading and thinking and approximately 2:00 hours of programming it on average.
 
-## Task Deadline: 15:30
+### Task Deadline: 15:30
 We start a countdown from the moment we end the Zoom call.
 ### We accept solutions before Wednesday, 15:30 Minsk Time (GMT+3)
 
 # Rover v02
 
-Update your *first version of Rover code*.
-Your task is to calculate the path with minimized fuel cost.
+Update your *`first version of Rover code`*.  
+Your task is to calculate the path with minimized fuel cost.  
 The first version is working, but real-life tests showed that it didn't match the reality.
 
 ## What are the changes?
@@ -26,18 +25,20 @@ The previous version processes only the terrain that is above sea level. But in 
 The numbers still show the height. Zero 0 is a sea level. Positive numbers show the elevation above sea level. Negative numbers mean that the terrain is below sea level.
 
 For example, here is already parsed photo of a small lake:
-{{"0","-1","-1","-1","0"}, 
-{"-1","-1","-3","-1","-1"}, 
-{"0","-1","-1","-1","0"}, 
-{"0","0","0","0","0"}} 
+
+> {{"0","-1","-1","-1","0"},  
+> {"-1","-1","-3","-1","-1"},  
+> {"0","-1","-1","-1","0"},  
+> {"0", "0", "0", "0", "0"}} 
 
 ### Impossible Elevation
 
 Nature is unpredictable, and sometimes there are places that the Rover cannot reach. Such terrain is marked as X on the photo. Rover cannot go into that place.
 For example, here is a unparsed photo with unreachable terrain:
-1 1 X X X 
-1 1 X X 8 
-1 1 0 0 3 
+
+> 1 1 X X X   
+> 1 1 X X 8   
+> 1 1 0 0 3   
 
 ### Updated movement
 Now your Rover can move diagonally! It still cannot get back to the same place, though.
@@ -51,9 +52,10 @@ The fuel cost works the same with negative numbers: moving from 0 to 2 will cost
 Diagonal movement requires different fuel mileage. Every second diagonal move consumes two fuel units. The first diagonal move is one fuel, the second diagonal move is two fuel, the third is one fuel, the fourth is two, etc.
 
 For example, here 
-1 2 1 
-1 2 1 
-1 7 0 
+> 1 2 1  
+> 1 2 1  
+> 1 7 0  
+ 
 a path from [0][0] to [1][1] costs 1 fuel for diagonal move plus 1 fuel for elevation, and a path from [1][1] to [2][2] costs 2 fuel for the second diagonal move and 2 fuel for descent.
 
 ### Error handling
@@ -68,6 +70,4 @@ So, if the Rover cannot move, throw an exception and end the program. Write to t
 The input matrix now is a string array, not an integer array.
 Input example:
 Java and C#:
-{{"1", "2"},{"1","X"},{"0","1"}}
-JS:
-[['1', '2'],['1','X'],['0','1']]
+> {{"1", "2"},{"1","X"},{"0","1"}}
